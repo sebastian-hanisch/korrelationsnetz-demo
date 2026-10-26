@@ -2,7 +2,7 @@
 Sebastian Hanisch - Operations Research und Machine Learning
 
 Sechstes Stück der Korrelations-Reihe. p Kennzahlen über n Wochen aus einer Welt mit bekannten direkten Zusammenhängen (Kette, Gitter, Zufallsnetz, verborgener Faktor). Daraus werden drei Netze gebaut
-(Schwelle auf |r|, Teilkorrelation mit Fisher-z und Bonferroni, Graphical Lasso) und mit der Wahrheit verglichen: richtige, falsche und fehlende Kanten, Transitivität, die exakte Erwartung.
+(Schwelle auf |r|, Teilkorrelation mit Fisher-z und Bonferroni, Graphical Lasso) und mit der Wahrheit verglichen: richtige, falsche und fehlende Kanten, Transitivität, die Erwartung (Fisher-z-Näherung).
 
 Lauffähig mit: streamlit run app.py
 """
@@ -196,7 +196,7 @@ if grid is not None:
     kind, text = ev.verdict_e1(grid["e1"], e1_truth)
     getattr(st, kind)(text)
     st.caption("Das Schwellennetz irrt in beide Richtungen: es erfindet Kanten (Faktor, zwei Schritte in der Kette) und verfehlt echte (Gitter). Das Teilkorrelationsnetz ist in der Kette fast fehlerfrei, im Gitter und im Zufallsnetz "
-               "knapp an der Nachweisgrenze. Der Graphical Lasso mit EBIC findet die echten Kanten und fügt falsche hinzu; mit dem besten λ ist er so gut wie die Rangfolge nach |r|.")
+               "knapp an der Nachweisgrenze. Der Graphical Lasso mit EBIC findet die echten Kanten und fügt falsche hinzu; mit dem besten λ liegt er nur wenig über der Rangfolge nach |r|.")
 
 st.markdown("---")
 
@@ -204,7 +204,7 @@ st.markdown("---")
 
 st.subheader("🔬 Experiment 2: Gegen die Datenmenge")
 if grid is not None:
-    st.caption(f"p = {C.GRID_P}, n = {', '.join(str(x) for x in C.E2_NS)} Wochen, {len(C.GRID_SEEDS) * C.E2_RUNS} Datensätze je Zelle. Rauten: die exakte Erwartung der beiden einfachen Netze (Fisher-z).")
+    st.caption(f"p = {C.GRID_P}, n = {', '.join(str(x) for x in C.E2_NS)} Wochen, {len(C.GRID_SEEDS) * C.E2_RUNS} Datensätze je Zelle. Rauten: die Erwartung der beiden einfachen Netze (Fisher-z-Näherung).")
     e2c1, e2c2 = st.columns(2)
     e2_truth = e2c1.selectbox("Welt", list(C.E2_TRUTHS), format_func=TRUTH_SHORT.get, key="e2_truth")
     e2_gamma = e2c2.selectbox("EBIC-Gewicht γ", list(C.GAMMAS), index=1, key="e2_gamma", format_func=n_text)
@@ -229,7 +229,7 @@ if grid is not None:
     st.plotly_chart(build_edges_vs_n(grid["e3"], e3_truth), width="stretch", key="e3_edges")
     kind, text = ev.verdict_e3(grid["e3"], e3_truth)
     getattr(st, kind)(text)
-    st.caption("Mit so wenigen Wochen verbindet das Schwellennetz fast jede Kennzahl mit jeder. Der Graphical Lasso rechnet auch bei n < p, aber EBIC wählt das leere Netz, und das beste λ liefert nicht mehr als die Rangfolge.")
+    st.caption("Mit so wenigen Wochen verbindet das Schwellennetz fast jede Kennzahl mit jeder. Der Graphical Lasso rechnet auch bei n < p, aber EBIC wählt das leere Netz, und das beste λ liefert kaum mehr als die Rangfolge.")
 
 st.markdown("---")
 
@@ -272,7 +272,7 @@ st.markdown(
 | Annahme | Was passiert, wenn sie verletzt ist | Wer setzt an |
 |---|---|---|
 | **Gemeinsam normalverteilte, lineare Zusammenhänge** | Teilkorrelation und Graphical Lasso sehen nur lineare, gaußsche Abhängigkeit; eine nichtlineare Kante ohne lineare Teilkorrelation bleibt unsichtbar | nicht gebaut |
-| **Alles Wichtige ist gemessen** | eine verborgene Ursache macht jedes Paar abhängig; kein Netz hier (Schwelle, Teilkorrelation, Graphical Lasso) trennt das (Experiment 5) | – |
+| **Alles Wichtige ist gemessen** | eine verborgene Ursache macht jedes Paar abhängig; kein Netz hier (Schwelle, Teilkorrelation, Graphical Lasso) trennt das (Experiment 1 und 5) | – |
 | **Ursachen und Richtungen** | ein Netz hier ist ungerichtet und sagt nichts über Ursachen; der PC-Algorithmus und Pfeilrichtungen gehören der Kausal-Linie | `strukturlernen-demo` |
 | **λ wird aus den Daten gewählt** | EBIC ohne Neuanpassung wählt bei wenig Daten das leere Netz und bei vielen zu viele Kanten; Kreuzvalidierung und Neuanpassung sind nicht gebaut | – |
 | **Rangfolge und bestes λ kennen die Wahrheit** | beide sind nur Messlatten (Obergrenzen), kein Verfahren für echte Daten | – |

@@ -7,16 +7,16 @@ Sechstes Stück der Korrelations-Reihe in der „Konzepte“-Reihe für die Webs
 
 ## Warum dieses Problem
 
-Ein Netz aus Korrelationen sieht aus wie eine Landkarte der Zusammenhänge und ist keine: es mischt direkte und indirekte Zusammenhänge und zeigt gemeinsame Ursachen als Kanten. Befunde (p = 40 Kennzahlen): eine Welt **ohne jede direkte Kante** liefert bei n = 500 ein Schwellennetz mit **737,2 von 780** möglichen Kanten und Transitivität **0,95** (erwartet 728,1 Kanten), das Teilkorrelationsnetz hat 0,2; dieselbe Schwelle findet in einem Gitter mit 67 echten Kanten nur **8,9** und wird mit mehr Daten **schlechter** (F1 0,414 bei n = 100, 0,022 bei n = 2 000); das Teilkorrelationsnetz hat in der Kette bei n = 100 nur **9,5 von 39** echten Kanten (erwartet 9,27); und der Graphical Lasso ist kein Ausweg, weil die Wahl von λ die eigentliche Schwierigkeit ist: mit dem besten λ liegt er in allen 31 Zellen mit Graphical Lasso höchstens 0,028 F1 von der einfachen Rangfolge nach \|r\| entfernt (beide kennen die Wahrheit), mit EBIC wählt er bei wenig Daten das leere Netz und bei n = 2 000 in der Kette 27,7 falsche Kanten. Die Kantenzahl des Schwellen- und des Teilkorrelationsnetzes lässt sich vorher ausrechnen (Fisher-z), und die Demo zeigt die Erwartung neben jeder Messung.
+Ein Netz aus Korrelationen sieht aus wie eine Landkarte der Zusammenhänge und ist keine: es mischt direkte und indirekte Zusammenhänge und zeigt gemeinsame Ursachen als Kanten. Befunde (p = 40 Kennzahlen): eine Welt **ohne jede direkte Kante** liefert bei n = 500 ein Schwellennetz mit rund **730 von 780** möglichen Kanten (Mittel der 20 Datensätze **737,2**, Streuung je Datensatz rund 40 Kanten; erwartet 728,1) und Transitivität rund **0,95**, das Teilkorrelationsnetz hat 0,2 Kanten; dieselbe Schwelle findet in einem Gitter mit 67 echten Kanten nur **8,9** und wird ab n = 100 mit mehr Daten **schlechter** (F1 rund 0,4 bei n = 100, rund 0,03 bei n = 2 000: 0,414 und 0,022 im Raster); das Teilkorrelationsnetz hat in der Kette bei n = 100 nur **9,4 von 39** echten Kanten (erwartet 9,2); und mit EBIC (ohne Neuanpassung) ist der Graphical Lasso kein Ausweg: die Wahl von λ ist hier die eigentliche Schwierigkeit: mit dem besten λ liegt er in allen 31 Zellen mit Graphical Lasso höchstens 0,028 F1 von der einfachen Rangfolge nach \|r\| entfernt (beide kennen die Wahrheit), mit EBIC wählt er bei wenig Daten das leere Netz und bei n = 2 000 in der Kette 27,7 falsche Kanten. Die Kantenzahl des Schwellen- und des Teilkorrelationsnetzes lässt sich vorher ausrechnen (Fisher-z), und die Demo zeigt die Erwartung neben jeder Messung.
 
 ## Befunde und Korrekturen gegenüber dem Plan
 
 Der Einzelplan (`korrelation-planung/STUECK-6-korrelationsnetz.md`, nicht in diesem Repo) stützte sich auf Wegwerfskripte mit gleichem Erzeuger und eigenem Löser; die gebauten Zahlen stimmen mit der Vormessung überein, mit diesen Ausnahmen:
 
 - **Die Nabe fliegt raus.** Die vierte Welt der ersten Messung (Sterne um Knotenpunkte) verhielt sich in der Vormessung wie die Kette und brachte keinen eigenen Befund; gebaut sind Kette, Gitter, Zufallsnetz und Faktor.
-- **Faktor-Welt:** der PLAN (aus der ersten Vormessung) nannte 652 Kanten und Transitivität 0,86 aus **einem** Datensatz. Im Mittel über 20 Datensätze sind es **737,2** Kanten (erwartet 728,1) und Transitivität **0,95**: alle Paare hängen am selben Stichprobenwert des Faktors, die Kantenzahl schwankt von Datensatz zu Datensatz stark, ein einzelner Datensatz ist kein Befund.
+- **Faktor-Welt:** der PLAN (aus der ersten Vormessung) nannte 652 Kanten und Transitivität 0,86 aus **einem** Datensatz. Im Mittel über 20 Datensätze sind es **737,2** Kanten (erwartet 728,1; ein Lauf mit 300 Datensätzen gab 731,6) und Transitivität **0,95**: alle Paare hängen am selben Stichprobenwert des Faktors, die Kantenzahl schwankt von Datensatz zu Datensatz stark, ein einzelner Datensatz ist kein Befund.
 - **Graphical Lasso ist kein Gewinner.** Der PLAN erwartete, dass die regularisierte Schätzung das Netz am besten trifft. Gemessen: mit dem besten λ des Pfads (er kennt die Wahrheit) liegt sie in allen 31 Zellen höchstens 0,028 F1 von der Rangfolge nach \|r\| mit bekannter Kantenzahl entfernt; mit EBIC (γ = 0,5, ohne Neuanpassung) ist sie bei wenig Daten leer und bei vielen zu dicht. Der Vorteil der Dünnbesetzung bleibt als Idee, der Vorteil im Ergebnis nicht.
-- **Neu:** die **exakte Erwartung** der Kantenzahl für Schwellen- und Teilkorrelationsnetz aus der Fisher-z-Näherung (Tabelle unten), das Gewicht γ des EBIC als Regler und Experiment (**kein γ gewinnt überall**), die Transitivität als Fehlersignal.
+- **Neu:** die **Erwartung (Fisher-z-Näherung)** der Kantenzahl für Schwellen- und Teilkorrelationsnetz aus der Fisher-z-Näherung (Tabelle unten), das Gewicht γ des EBIC als Regler und Experiment (**kein γ gewinnt überall**), die Transitivität als Fehlersignal.
 - **Eigener Löser gegen `sklearn`:** `sklearn.covariance.graphical_lasso` bestraft die **Diagonale nicht**; die erste Fassung des eigenen Lösers tat es und wich um 0,2 bis 0,37 ab. Außerdem meldet `sklearn` bei sehr enger Toleranz „did not converge“: das Orakel vergleicht die **Zielfunktion** und die Einträge auf 5·10⁻³.
 
 ## Modell
@@ -28,9 +28,9 @@ Standardisierte, gemeinsam normalverteilte Kennzahlen; die Wahrheit steht in der
 - **Schwellennetz:** Kante, wenn \|r\| > τ (strikt; τ = 0,30 im Raster). **Teilkorrelationsnetz:** Teilkorrelation aus der Inversen der Stichprobenmatrix, Fisher-z mit n − p − 1 Freiheitsgraden, Bonferroni über alle p(p−1)/2 Paare (α = 0,05 im Raster); bei n ≤ p + 1 gibt es die Inverse nicht, das Netz entfällt.
 - **Graphical Lasso** (`knz_algorithm.py`, eigener Blockkoordinatenabstieg nach Friedman, Hastie und Tibshirani, Diagonale nicht bestraft): ein Pfad aus 15 Werten von λ_max (größtes \|r\|, leeres Netz) bis 0,05 λ_max, jeweils mit den Werten des vorigen angewärmt. **EBIC** mit dem Verbundwert der bestraften Schätzung und ohne Neuanpassung (γ = 0, 0,5, 1); **bestes λ** = der Pfadwert mit dem höchsten F1 gegen die Wahrheit (kennt die Wahrheit, nur eine Obergrenze).
 - **Rangfolge:** die k Paare mit dem größten \|r\|, k = Zahl der echten Kanten (kennt die Wahrheit, nur eine Messlatte). **F1** = 2 · richtig / (2 · richtig + falsch + fehlend); ohne echte und gefundene Kanten gilt F1 = 1 (richtig leer). **Transitivität** = 3 · Dreiecke / verbundene Dreier.
-- **Exakte Erwartung:** artanh r̂ ist näherungsweise normal mit Mittel artanh ρ und Varianz 1/(n − 3); das Schwellennetz hat in jedem Paar die Wahrscheinlichkeit P(\|artanh r̂\| > artanh τ). Für das Teilkorrelationsnetz gilt dasselbe mit der wahren Teilkorrelation, Varianz 1/(n − p − 1) und der Bonferroni-Schwelle.
+- **Erwartung (Fisher-z-Näherung):** artanh r̂ ist näherungsweise normal mit Mittel artanh ρ und Varianz 1/(n − 3); das Schwellennetz hat in jedem Paar die Wahrscheinlichkeit P(\|artanh r̂\| > artanh τ). Für das Teilkorrelationsnetz gilt dasselbe mit der wahren Teilkorrelation, Varianz 1/(n − p − 1) und der Bonferroni-Schwelle.
 - **Experimente:** (1) vier Welten, drei Netze (n = 500), (2) gegen die Datenmenge (n = 50 bis 2 000), (3) mehr Kennzahlen als Wochen (n = 20 bis 60), (4) der λ-Pfad und die Wahl des Abschnitts, (5) der verborgene Faktor (n bis 50 000).
-- **Vorgerechnetes Raster** (`tools/make_grid.py`, `data/network_grid.json`, 261 Sekunden auf 10 Prozessen): E1 4 Welten · 20 Datensätze, E2 3 Welten · 5 Datenmengen · 16 Datensätze, E3 3 Welten · 4 Datenmengen · 16 Datensätze (je mit Pfad), E5 Faktor-Welt · 4 Datenmengen · 100 Datensätze (ohne Graphical Lasso); p = 40, feste Seeds.
+- **Vorgerechnetes Raster** (`tools/make_grid.py`, `data/network_grid.json`, 261 Sekunden auf 10 Prozessen bei der Erzeugung, rechnerabhängig): E1 4 Welten · 20 Datensätze, E2 3 Welten · 5 Datenmengen · 16 Datensätze, E3 3 Welten · 4 Datenmengen · 16 Datensätze (je mit Pfad), E5 Faktor-Welt · 4 Datenmengen · 100 Datensätze (ohne Graphical Lasso); p = 40, feste Seeds.
 
 ## Befunde (gemessen, keine Behauptungen)
 
@@ -45,7 +45,7 @@ Alle Zahlen stehen in `tests/test_claims.py` (Raster-Werte gegen die JSON-Datei,
 | **Zufallsnetz** (43; 0,04) | 24,4 / 0,0 / 0,724 / 0,05 | 38,4 / 0,1 / 0,941 | 51,8 / 8,8 / 0,909 | 0,986 | 0,969 |
 | **Faktor** (0; 0,00) | 737,2 / 737,2 / 0,000 / 0,95 | 0,2 / 0,2 / 0,800 | 492,8 / 492,8 / 0,000 | 1,000 | 1,000 |
 
-**Die Kantenzahl ist vorher bekannt** (exakte Erwartung aus der Fisher-z-Näherung gegen den Mittelwert aus 16 bis 100 Datensätzen; Schwellennetz: Kanten; Teilkorrelationsnetz: echte Kanten / alle Kanten):
+**Die Kantenzahl ist vorher bekannt** (erwartet nach der Fisher-z-Näherung, gegen den Mittelwert aus 16 bis 100 Datensätzen, der um bis zu etwa eine Kante abweichen kann; Schwellennetz: Kanten; Teilkorrelationsnetz: echte Kanten / alle Kanten):
 
 | Welt, Wochen | Schwellennetz erwartet | gemessen | Teilkorrelation erwartet (echt / alle) | gemessen (echt / alle) |
 |---|---|---|---|---|
@@ -119,18 +119,18 @@ Alle Zahlen stehen in `tests/test_claims.py` (Raster-Werte gegen die JSON-Datei,
 
 Befunde in Worten:
 
-- **Das Schwellennetz irrt in beide Richtungen.** Es erfindet Kanten (Faktor-Welt 737,2 von 780; in der Kette bei n = 500 im Mittel 3,2 falsche Kanten und Transitivität 0,18 statt 0, weil Paare zwei Schritte entfernt mit wahrem r = 0,25 die Schwelle 0,30 zufällig überschreiten; bei n = 50 sind es 79,6, bei n = 20 199,8 Kanten statt 39) und verfehlt echte (Gitter: nur 8,9 von 67, F1 0,234, weil die wahre Korrelation direkter Nachbarn rund 0,2 beträgt). **Eine feste Schwelle ist keine Eigenschaft der Welt.**
-- **Mehr Daten machen das Schwellennetz im Gitter schlechter:** F1 0,414 bei n = 100, 0,022 bei n = 2 000 (0,8 Kanten). Bei wenig Daten bringt das Rauschen die Paare über 0,3, bei vielen sitzen die echten Kanten genau darunter.
-- **Das Teilkorrelationsnetz ist bei wenig Daten blind** (Kette n = 100: 9,5 von 39, erwartet 9,27, obwohl jede Teilkorrelation 0,4 beträgt) und gewinnt bei vielen alles (Gitter n = 2 000: 67 von 67). Die Macht des Tests, nicht die Struktur, begrenzt, was man sieht.
+- **Das Schwellennetz irrt in beide Richtungen.** Es erfindet Kanten (Faktor-Welt 737,2 von 780; in der Kette bei n = 500 im Mittel rund 4 falsche Kanten (erwartet 4,3; die Tabelle zeigt 3,2 aus 20 Datensätzen) und Transitivität rund 0,2 statt 0, weil Paare zwei Schritte entfernt mit wahrem r = 0,25 die Schwelle 0,30 zufällig überschreiten; bei n = 50 sind es 79,6, bei n = 20 199,8 Kanten statt 39) und verfehlt echte (Gitter: nur 8,9 von 67, F1 0,234, weil die wahre Korrelation direkter Nachbarn nur 0,23 bis 0,27 beträgt, die Teilkorrelation 0,2). **Eine feste Schwelle ist keine Eigenschaft der Welt.**
+- **Mehr Daten machen das Schwellennetz im Gitter ab n = 100 schlechter:** F1 0,414 bei n = 100, 0,022 bei n = 2 000 (0,8 Kanten). Bei wenig Daten bringt das Rauschen die Paare über 0,3, bei vielen sitzen die echten Kanten genau darunter.
+- **Das Teilkorrelationsnetz ist bei n ≤ 50 blind, bei n = 100 findet es nur etwa ein Viertel der Kanten** (Kette n = 100: 9,4 von 39 echten, 9,5 Kanten insgesamt, erwartet 9,27, obwohl die Teilkorrelation 0,4 beträgt, an den beiden Randkanten 0,447) und gewinnt bei vielen alles (Gitter n = 2 000: 67 von 67). Die Macht des Tests, nicht die Struktur, begrenzt, was man sieht.
 - **EBIC wählt bei wenig Daten das leere Netz** (Kette n = 50: 0,0 Kanten) **und bei vielen Daten zu viele Kanten** (falsche Kanten in der Kette: 19,7 bei n = 500, 27,7 bei n = 2 000; im Gitter bei n = 500 19,4). Mit γ = 1 ist EBIC im Gitter bei n = 500 zu streng (15,9 Kanten, F1 0,182): **kein γ gewinnt überall.** Das ist ein Befund über diese Regel (Verbundwert der bestraften Schätzung, ohne Neuanpassung), nicht über jede Regel.
-- **Das beste λ und die Rangfolge liegen dicht beieinander** (höchstens 0,028 F1 Abstand in 31 Zellen): in diesen Welten bringt der Graphical Lasso bei bekannter Kantenzahl keinen Vorsprung vor dem Sortieren nach \|r\|; die Schwierigkeit ist der Abschnitt, nicht der Schätzer.
-- **Bei n < p liefert kein Verfahren ein verlässliches Netz:** in der Kette mit n = 20 erreicht die Rangfolge F1 0,494 und das beste λ 0,502 (Schwellennetz 0,279); EBIC wählt das leere Netz.
+- **Das beste λ und die Rangfolge liegen dicht beieinander** (höchstens 0,028 F1 Abstand in 31 Zellen): in diesen Welten bringt der Graphical Lasso bei bekannter Kantenzahl nur einen kleinen Vorsprung vor dem Sortieren nach \|r\| (im Mittel 0,009 F1, in 30 von 31 Zellen nicht schlechter; das beste λ ist das Maximum über 15 Pfadwerte und kennt die Wahrheit); die Schwierigkeit ist der Abschnitt, nicht der Schätzer.
+- **Bei n < p erreicht in diesen Welten keines der geprüften Verfahren ein F1 über 0,67:** in der Kette mit n = 20 erreicht die Rangfolge F1 0,494 und das beste λ 0,502 (Schwellennetz 0,279); EBIC wählt das leere Netz.
 - **Der verborgene Faktor:** die Teilkorrelation jedes Paares ist nicht null (0,0245). Das Teilkorrelationsnetz hat bei n = 500 0,2 Kanten, bei n = 5 000 9,3 und bei n = 50 000 **727,0 von 780** (Transitivität 0,931), obwohl keine direkte Kante existiert. „Keine Kante“ war eine Frage der Macht, nicht der Wahrheit. Der Graphical Lasso mit EBIC zeichnet bei n = 500 492,8 Kanten.
 
 ## Ehrliche Grenzen
 
 - **Gemeinsam normalverteilte, lineare Zusammenhänge.** Teilkorrelation und Graphical Lasso sehen nur lineare, gaußsche Abhängigkeit; eine nichtlineare Kante ohne lineare Teilkorrelation bleibt unsichtbar.
-- **Alles Wichtige ist gemessen.** Eine verborgene Ursache macht jedes Paar abhängig; keines der drei Netze trennt das (Experiment 5).
+- **Alles Wichtige ist gemessen.** Eine verborgene Ursache macht jedes Paar abhängig; keines der drei Netze trennt das (Experiment 1 und 5).
 - **Keine Ursachen und keine Richtungen.** Die Netze sind ungerichtet; der PC-Algorithmus und Pfeilrichtungen gehören der Linie *Kausale Diagramme und Adjustierung* (`strukturlernen-demo`).
 - **λ wird aus den Daten gewählt, aber nur eine Regel ist gebaut.** EBIC ohne Neuanpassung ist ein Befund über diese Regel; Kreuzvalidierung und Neuanpassung fehlen. Die Rangfolge und das beste λ kennen die Wahrheit und sind Messlatten, kein Verfahren für echte Daten.
 - **Vier Welten sind Beispiele.** Andere Dichten und Stärken verschieben die Zahlen; die Aussagen gelten für diese Welten, p = 40 und die genannten Schwellen.
@@ -140,7 +140,7 @@ Befunde in Worten:
 
 ## Verifikation
 
-- **Orakel** (`tests/test_oracle_korrelationsnetz.py`): die Teilkorrelation gegen die **Korrelation von Regressionsresiduen** (`numpy.linalg.lstsq`); die Fisher-z-Entscheidung Paar für Paar gegen **`scipy.stats.norm`**; der Graphical Lasso gegen die **Optimalitätsbedingungen** (ohne Bibliothek) und gegen **`sklearn.covariance.graphical_lasso`** (Zielfunktion und Einträge); die Transitivität gegen **`networkx.transitivity`**; EBIC gegen eine Schleifenfassung; die exakten Erwartungen gegen **scipy Paar für Paar** und gegen **Simulationen mit 100 bis 300 Datensätzen**.
+- **Orakel** (`tests/test_oracle_korrelationsnetz.py`): die Teilkorrelation gegen die **Korrelation von Regressionsresiduen** (`numpy.linalg.lstsq`); die Fisher-z-Entscheidung Paar für Paar gegen **`scipy.stats.norm`**; der Graphical Lasso gegen die **Optimalitätsbedingungen** (ohne Bibliothek) und gegen **`sklearn.covariance.graphical_lasso`** (Zielfunktion und Einträge); die Transitivität gegen **`networkx.transitivity`**; EBIC gegen eine Schleifenfassung; die Erwartungen (Fisher-z-Näherung) gegen **scipy Paar für Paar** und gegen **Simulationen mit 100 bis 300 Datensätzen**.
 - **Kern** (`tests/test_algorithm.py`, `tests/test_edge_cases.py`): Handrechnungen (Mini-Instanzen in `conftest.py`: drei Kennzahlen A–B–C mit Teilkorrelation 0, drei Kennzahlen mit Faktor 0,2647, zwei Kennzahlen mit r = 0,6 und λ = 0,2 gibt W₁₂ = 0,4), **inklusive Grenzen** (\|r\| = τ ist keine Kante, n − p − 1 = 0 gibt kein Netz, Kantenschwelle der Präzisionsmatrix), kleinste Welt, n < p, λ ≥ λ_max.
 - **Eigenschaften** (`tests/test_eigenschaften_korrelationsnetz.py`): Symmetrie und keine Schleifen, Verschachtelung der Schwellen- und Rangnetze, Teilmenge bei kleinerem α, Verschieben und Strecken der Spalten, Umordnung der Kennzahlen, Monotonie der Erwartungen.
 - **Raster und Aussagen** (`tests/test_grid.py`, `tests/test_claims.py`): Probe des Erzeugers gegen die gespeicherte (Zellen mit Graphical Lasso mit grober Toleranz, weil die Wahl am Rand je Plattform kippen kann), jede Zahl dieser README gegen das Raster oder die Live-Funktion, die Tabellen Zeile für Zeile in der Rundung der App.
@@ -154,7 +154,7 @@ Befunde in Worten:
 | `.github/workflows/tests.yml` | CI: Push, Pull Request, wöchentlicher Canary |
 | `.gitignore` | venv, Caches, Streamlit-Secrets |
 | `.streamlit/config.toml` | Streamlit-Einstellungen (keine Nutzungsstatistik) |
-| `knz_algorithm.py` | Kern: Welten, Teilkorrelation, Netze, Transitivität, Güte, Graphical Lasso, EBIC, exakte Erwartungen |
+| `knz_algorithm.py` | Kern: Welten, Teilkorrelation, Netze, Transitivität, Güte, Graphical Lasso, EBIC, Erwartungen (Fisher-z-Näherung) |
 | `knz_constants.py` | Regler-Grenzen, Welten, Raster der Messreihen, Farben, Presets |
 | `knz_evaluation.py` | Einzelwelt mit ihren Zeilen, Zellen des Rasters, Verdikte |
 | `knz_layout.py` | Fester Kopf (Stylesheet) |
@@ -195,7 +195,7 @@ pip install -r requirements-dev.txt
 pytest tests/ -v
 ```
 
-Das Raster entsteht neu mit `python tools/make_grid.py` (261 Sekunden auf zehn Prozessen); `tests/test_grid.py` rechnet eine feste Probe nach und schlägt an, wenn Erzeuger oder Statistik das Raster überholt haben.
+Das Raster entsteht neu mit `python tools/make_grid.py` (bei der letzten Erzeugung 261 Sekunden auf zehn Prozessen; je nach Rechner anders); `tests/test_grid.py` rechnet eine feste Probe nach und schlägt an, wenn Erzeuger oder Statistik das Raster überholt haben.
 
 Gebaut mit Streamlit, Plotly und NumPy.
 

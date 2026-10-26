@@ -172,7 +172,7 @@ def build_f1_vs_n(cells: list, truth: str, gamma: float, height: int = 360):
 
 
 def build_edges_vs_n(cells: list, truth: str, height: int = 360):
-    """Kanten der beiden einfachen Netze gegen n: gemessen (Linie) und exakt erwartet (Rauten); Linie der echten Kanten."""
+    """Kanten der beiden einfachen Netze gegen n: gemessen (Linie) und nach der Fisher-z-Näherung erwartet (Rauten); Linie der echten Kanten."""
     mine = sorted((c for c in cells if c["truth"] == truth), key=lambda c: c["n"])
     fig = go.Figure()
     ns = [c["n"] for c in mine]
